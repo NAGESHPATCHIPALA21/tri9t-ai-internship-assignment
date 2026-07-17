@@ -6,6 +6,11 @@ from app.models import Document, DocumentVersion, Node
 from app.version_compare import compare_versions
 
 router = APIRouter()
+from pydantic import BaseModel
+
+class SelectionRequest(BaseModel):
+    version_id: int
+    node_ids: list[int]
 
 
 @router.get("/documents")
@@ -119,3 +124,22 @@ def search(q: str):
 @router.get("/compare")
 def compare(v1: str, v2: str):
     return compare_versions(v1, v2)
+from app.models import Selection
+
+
+@router.post("/selection")
+def create_selection(req: SelectionRequest):
+    db = SessionLocal()
+
+    for node_id in req.node_ids:
+        db.add(
+            Selection(
+                version_id=req.version_id,
+                node_id=node_id,
+            )
+        )
+
+    db.commit()
+    db.close()
+
+    return {"message": "Selection saved"}

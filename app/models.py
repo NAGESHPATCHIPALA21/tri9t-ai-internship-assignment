@@ -8,6 +8,14 @@ from sqlalchemy import (
 from sqlalchemy.orm import relationship
 
 from app.database import Base
+class Selection(Base):
+    __tablename__ = "selections"
+
+    id = Column(Integer, primary_key=True)
+
+    version_id = Column(Integer, ForeignKey("document_versions.id"))
+
+    node_id = Column(Integer, ForeignKey("nodes.id"))
 
 
 class Document(Base):
@@ -50,3 +58,4 @@ class Node(Base):
     content_hash = Column(String)
 
     version = relationship("DocumentVersion", back_populates="nodes")
+    
