@@ -2,10 +2,13 @@ from app.parser import parse_pdf
 
 nodes = parse_pdf("data/ct200_manual.pdf")
 
-for n in nodes:
+print(f"Total nodes: {len(nodes)}")
+
+for node in nodes[:10]:
     print(
-        n["id"],
-        n["title"],
-        n["parent"],
-        n["page"]
+        f"{node.id} | "
+        f"{node.title} | "
+        f"Level={node.level} | "
+        f"Parent={node.parent} | "
+        f"Page={node.page}"
     )
