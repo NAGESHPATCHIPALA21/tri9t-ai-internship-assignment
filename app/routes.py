@@ -3,6 +3,7 @@ from sqlalchemy import or_
 
 from app.database import SessionLocal
 from app.models import Document, DocumentVersion, Node
+from app.version_compare import compare_versions
 
 router = APIRouter()
 
@@ -115,3 +116,6 @@ def search(q: str):
         }
         for n in nodes
     ]
+@router.get("/compare")
+def compare(v1: str, v2: str):
+    return compare_versions(v1, v2)
