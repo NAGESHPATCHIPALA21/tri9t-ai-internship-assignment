@@ -1,4 +1,10 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Text,
+    ForeignKey,
+)
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -7,25 +13,40 @@ from app.database import Base
 class Document(Base):
     __tablename__ = "documents"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)
+
+    versions = relationship("DocumentVersion", back_populates="document")
 
 
 class DocumentVersion(Base):
     __tablename__ = "document_versions"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
     document_id = Column(Integer, ForeignKey("documents.id"))
-    version = Column(Integer)
+    version = Column(String)
+    file_name = Column(String)
+
+    document = relationship("Document", back_populates="versions")
+    nodes = relationship("Node", back_populates="version")
 
 
 class Node(Base):
     __tablename__ = "nodes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True)
+
     version_id = Column(Integer, ForeignKey("document_versions.id"))
+
     title = Column(String)
-    body = Column(Text)
     level = Column(Integer)
-    parent_id = Column(Integer, nullable=True)
+
+    body = Column(Text)
+
+    page = Column(Integer)
+
+    parent_id = Column(Integer)
+
     content_hash = Column(String)
+
+    version = relationship("DocumentVersion", back_populates="nodes")
